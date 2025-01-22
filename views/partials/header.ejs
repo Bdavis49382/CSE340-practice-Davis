@@ -3,6 +3,14 @@
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <% if (mode.includes('dev')) { %>
+                <script>
+                    const ws = new WebSocket(`ws://${location.hostname}:${parseInt(<%= port %>) + 1}`);
+                    ws.onclose = () => {
+                        setTimeout(() => location.reload(), 2000);
+                    };
+                </script>
+            <% } %>
             <title><%= title %></title>
         </head>
         <body>
