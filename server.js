@@ -8,18 +8,28 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.set('view engine', 'ejs');
+
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.set('views', path.join(__dirname, 'views'));
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/home.html'));
+    const title = 'Home Page';
+    const content = '<h1>Welcome!</h1>';
+    res.render('index', {title, content});
 });
 
-app.get('/page1', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/page1.html'));
+app.get('/about', (req, res) => {
+    const title = 'About';
+    const content = '<h1>More About Us</h1>';
+    res.render('index', {title, content});
 });
 
-app.get('/page2', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/page2.html'));
+app.get('/contact', (req, res) => {
+    const title = 'Contact Us';
+    const content = '<h1>Contact Us!</h1>';
+    res.render('index', {title, content});
 });
 
 app.use((req, res) => {
