@@ -30,3 +30,11 @@ h1 {
 .dev-warning {
     color: red;
 }
+
+img {
+    max-width: 25%;
+}
+
+nav {
+    padding-bottom: 10px;
+}
