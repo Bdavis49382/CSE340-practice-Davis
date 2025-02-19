@@ -1,0 +1,36 @@
+<form action="/category/edit/<%= game.game_id %>" method="POST" enctype="multipart/form-data">
+    <!-- Display the current game image here, or use https://placehold.co/300x300/jpg if none exists -->
+    <img class="game-image" src="<%= game.image_path || 'https://placehold.co/300x300/jpg' %>" alt="Game Image">
+ 
+    <div>
+        <label for="game_name">Game Name:</label>
+        <!-- Pre-fill this input with the game's existing name -->
+        <input type="text" id="game_name" name="game_name" value="<%= game.game_name %>" required="">
+    </div>
+ 
+    <div>
+        <label for="game_description">Game Description:</label>
+        <!-- Pre-fill this textarea with the game's existing description -->
+        <textarea id="game_description" name="game_description" required=""><%= game.game_description %></textarea>
+    </div>
+ 
+    <div>
+        <label for="classification_id">Classification:</label>
+        <select id="classification_id" name="classification_id" required>
+            <option value="" disabled>Select Classification</option>
+            <% classifications.forEach(category => { %>
+                <option value="<%= category.classification_id %>" <%= category.classification_id == game.classification_id ? "selected" : "" %>>
+                    <%= category.classification_name %>
+                </option>
+            <% }); %>
+            <!-- Loop through classifications and select the correct one -->
+        </select>
+    </div>
+ 
+    <div>
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image">
+    </div>
+ 
+    <button type="submit">Update Game</button>
+</form>

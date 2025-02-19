@@ -9,7 +9,7 @@ ul {
     flex-direction: row;
 }
 
-a {
+li a {
     text-decoration: none;
     background-color: blueviolet;
     color: white;
@@ -37,4 +37,65 @@ img {
 
 nav {
     padding-bottom: 10px;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: gray;
+}
+
+header img {
+    max-width: 100%;
+}
+
+.category-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+ 
+    & .category-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+ 
+        &:last-child {
+            border-bottom: none;
+        }
+ 
+        &.header {
+            background-color: #f4f4f4;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+ 
+        & .category-cell {
+            flex: 1;
+            padding: 8px;
+            text-align: left;
+ 
+            & select {
+                width: 100%;
+                padding: 5px;
+            }
+ 
+            & button {
+                background-color: #d9534f;
+                color: white;
+                border: none;
+                padding: 6px 10px;
+                cursor: pointer;
+                border-radius: 3px;
+ 
+                &:hover {
+                    background-color: #c9302c;
+                }
+            }
+        }
+    }
 }

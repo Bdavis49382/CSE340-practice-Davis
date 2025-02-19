@@ -3,6 +3,9 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {injectScripts, injectStyles} from './src/middleware/script-injector.js';
+import addNav from './src/middleware/add-nav.js';
+import categoryRoute from './src/routes/category/index.js';
+import { setupDatabase } from './src/database/index.js';
  
 // Import all other required modules: Route handlers, Middleware, etc.
 import baseRoute from './src/routes/index.js';
@@ -10,6 +13,7 @@ import layouts from './src/middleware/layouts.js';
 import staticPaths from './src/middleware/static-paths.js';
 import { notFoundHandler, globalErrorHandler } from './src/middleware/error-handler.js';
 import handleDev from './src/middleware/dev-specific.js';
+import fileUploads from './src/middleware/file-upload.js';
  
 // Get the current file path and directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -22,6 +26,9 @@ const port = process.env.PORT || 3000;
 // Create an instance of an Express application
 const app = express();
 
+// Middleware to process multipart form data with file uploads
+app.use(fileUploads);
+
 // Serve static files from the public directory
 // app.use(staticPaths);
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
@@ -29,6 +36,11 @@ app.use('/js', express.static(path.join(__dirname, 'public/js')));
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 app.use(handleDev);
+app.use(addNav);
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Inject js and css scripts into the head
 app.use(injectScripts);
@@ -44,6 +56,9 @@ app.set('layout default', 'default');
 app.set('layouts', path.join(__dirname, 'src/views/layouts'));
 app.use(layouts);
  
+// Handle all request for a category of games
+app.use('/category', categoryRoute);
+
 // Use the home route for the root URL
 app.use('/', baseRoute);
 
@@ -73,6 +88,8 @@ if (mode.includes('dev')) {
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+
+    await setupDatabase(); //  <-- Run the setup function
     console.log(`Server running on http://127.0.0.1:${PORT}`);
 });

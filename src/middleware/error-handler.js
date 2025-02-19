@@ -23,15 +23,15 @@ const getVerifiedViewPath = (possible) => {
  */
 export const notFoundHandler = (req, res, next) => {
 
-    const isStaticFile = req.app.get('staticPaths').some((staticPath) => {
-        return req.url.startsWith(staticPath) }
-    );
+    // const isStaticFile = req.app.get('staticPaths').some((staticPath) => {
+    //     return req.url.startsWith(staticPath) }
+    // );
 
-    // If this is a static resource send back 404 now and do not attempt to load an error page
-    if (isStaticFile) {
-        res.status(404).end();
-        return;
-    }
+    // // If this is a static resource send back 404 now and do not attempt to load an error page
+    // if (isStaticFile) {
+    //     res.status(404).end();
+    //     return;
+    // }
 
     const title = 'Page Not Found';
     const error = new Error(title);
