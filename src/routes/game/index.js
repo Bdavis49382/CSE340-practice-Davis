@@ -3,6 +3,7 @@ import path from 'path';
 import { Router } from 'express';
 import { getCategories } from '../../models/category/index.js';
 import { addNewGame, deleteGame, getGameById, getGamesByCategory, updateGame } from '../../models/game/index.js';
+import { requireAuth } from "../../utils/index.js";
 
 const router = Router();
 
@@ -32,13 +33,13 @@ const getVerifiedGameImage = (images = []) => {
 };
 
 // Add new game route (view)
-router.get('/add', async (req, res) => {
+router.get('/add', requireAuth, async (req, res) => {
     const categories = await getCategories();
     res.render('game/add', { title: 'Add New Game', categories });
 });
 
 // Add new game route (form submission)
-router.post('/add', async (req, res) => {
+router.post('/add', requireAuth, async (req, res) => {
     const { game_name, game_description, category_id } = req.body;
     const image_path = getVerifiedGameImage(req.files?.image);
     await addNewGame(game_name, game_description, category_id, image_path);
@@ -46,7 +47,7 @@ router.post('/add', async (req, res) => {
 });
 
 // Delete game route (form submission)
-router.post('/delete/:id', async (req, res) => {
+router.post('/delete/:id', requireAuth, async (req, res) => {
     const referer = req.get('Referer') || '/';
     console.log(referer);
     await deleteGame(req.params?.id || null);
@@ -54,14 +55,14 @@ router.post('/delete/:id', async (req, res) => {
 });
 
 // Edit existing game route (view)
-router.get('/edit/:id', async (req, res) => {
+router.get('/edit/:id', requireAuth, async (req, res) => {
     const categories = await getCategories();
     const game = await getGameById(req.params.id);
     res.render('game/edit', { title: 'Edit Game', categories, game });
 });
 
 // Edit existing game route (form submission)
-router.post('/edit/:id', async (req, res) => {
+router.post('/edit/:id', requireAuth, async (req, res) => {
     // Get existing game data to handle image replacement
     const oldGameData = await getGameById(req.params.id);
  

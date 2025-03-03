@@ -12,4 +12,5 @@ router.get('/about', async (req, res) => {
     res.render('about', { title: 'About Page' });
 });
 
+
 export default router;

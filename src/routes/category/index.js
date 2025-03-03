@@ -1,16 +1,17 @@
 import { Router } from 'express';
 import { addCategory, deleteCategory, getCategories } from '../../models/category/index.js';
 import { getGamesByCategory, moveGamesToCategory } from '../../models/game/index.js';
+import { requireAuth } from "../../utils/index.js";
 
 const router = Router();
 
 // Add a new category route (view)
-router.get('/add', async (req, res) => {
+router.get('/add', requireAuth, async (req, res) => {
     res.render('category/add', { title: 'Add Category' });
 });
 
 // Add a new category route (form submission)
-router.post('/add', async (req, res) => {
+router.post('/add', requireAuth, async (req, res) => {
     // If the category is missing, redirect back to the form
     const category = req.body.name;
     if (!category) {
@@ -31,13 +32,13 @@ router.post('/add', async (req, res) => {
 });
 
 // Delete a category route (view)
-router.get('/delete', async (req, res) => {
+router.get('/delete', requireAuth, async (req, res) => {
     const categories = await getCategories();
     res.render('category/delete', { title: 'Delete Category', categories });
 });
 
 // Delete a category route (form submission)
-router.post('/delete/:id', async (req, res) => {
+router.post('/delete/:id', requireAuth, async (req, res) => {
     const category = req.params.id;
     const newCategory = req.body.new_category_id;
 

@@ -2,6 +2,8 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import session from 'express-session';
+import sqlite from "connect-sqlite3";
 
 // Import all other required modules: Route handlers, Middleware, etc.
 import baseRoute from './src/routes/index.js';
@@ -10,9 +12,11 @@ import configNodeEnv from './src/middleware/node-env.js';
 import configureStaticPaths from './src/middleware/static-paths.js';
 import fileUploads from './src/middleware/file-uploads.js';
 import gameRoute from './src/routes/game/index.js';
+import accountRoute from './src/routes/account/account.js';
 import layouts from './src/middleware/layouts.js';
 import { notFoundHandler, globalErrorHandler } from './src/middleware/error-handler.js';
 import { setupDatabase } from './src/database/index.js';
+import flashMessages from './src/middleware/flash-messages.js';
 
 // Get the current file path and directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -22,8 +26,27 @@ const __dirname = path.dirname(__filename);
 const port = process.env.PORT || 3000;
 const mode = process.env.MODE || 'production';
 
+const sqliteSessionStore = sqlite(session);
+
 // Create an instance of an Express application
 const app = express();
+
+// session middleware
+app.use(session({
+    store: new sqliteSessionStore({
+        db: "db.sqlite",           // SQLite database file
+        dir: "./src/database/",    // Directory where the file is stored
+        concurrentDB: true         // Allows multiple processes to use the database
+    }),
+    secret: process.env.SESSION_SECRET || "default-secret",
+    resave: false,                 // Prevents re-saving sessions that have not changed
+    saveUninitialized: true,       // Saves new sessions even if unmodified
+    name: "sessionId",
+    cookie: {
+        secure: false,             // Set to `true` in production with HTTPS
+        httpOnly: true,            // Prevents client-side access to the cookie
+    }
+}));
 
 // Configure the application based on environment settings
 app.use(configNodeEnv);
@@ -34,6 +57,8 @@ configureStaticPaths(app);
 // Set EJS as the view engine and record the location of the views directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
+
+app.use(flashMessages);
 
 // Set Layouts middleware to automatically wrap views in a layout and configure default layout
 app.set('layout default', 'default');
@@ -57,6 +82,9 @@ app.use('/game', gameRoute);
 
 // Handle routes specific to the categories
 app.use('/category', categoryRoute);
+
+// Handle routes specific to the accounts
+app.use('/account', accountRoute);
 
 // Apply error handlers
 app.use(notFoundHandler);
